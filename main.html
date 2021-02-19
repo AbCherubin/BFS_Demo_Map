@@ -1,0 +1,194 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Openlayers web map</title>
+
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./v6.4.3-dist/ol.css" />
+    <style>
+        body {
+            font-family: "Lucida Console", "Courier New", monospace;
+
+        }
+
+        .sidenav table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+
+            text-align: left;
+            padding: 1px;
+        }
+
+        .overlay-container {
+            /* background-color:white; */
+            width: 50px;
+            height: 15px;
+
+            -webkit-text-stroke: 0.25px black;
+            color: white;
+
+            line-height: 1em;
+            cursor: default;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 0px;
+            padding: 0px 0;
+            position: absolute;
+            z-index: 999;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -22px;
+            margin-bottom: -20px;
+
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            right: 0;
+            background-color: #1E2027;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            opacity: 1;
+
+        }
+
+        .sidenav a {
+            padding: 15px 2px 2px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav b {
+            padding: 2px 2px 2px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            background-color: #3F4351;
+     
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: whitesmoke;
+           
+        }
+
+        .sidenav b:hover {
+            color: #1E2027;
+            background-color: #A0F961;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 28px;
+            margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {
+                padding-top: 15px;
+            }
+
+            .sidenav a {
+                font-size: 18px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+        <img src="./pics/TLD.png" alt="Trulli" width="400px" height="250px">
+        <a href="#" style="padding: 2px 2px 2px 20px;"><b>PlayBack</b></a>
+        <hr style="height:2px;border-width:0;color:#3F4351;background-color:#3F4351">
+        <table>
+            <tr>
+                <th><a href="#">Asset:</a></th>
+                <th><a href="#"><span id="vehicle_name"></span></a></th>
+            </tr>
+            <tr>
+                <th><a href="#">Driver:</a></th>
+                <th><a href="#"><span id="driver"></span></a></th>
+
+            </tr>
+            <tr>
+                <th><a href="#">Fuel:</a></th>
+                <th><a href="#"><span id="fuel"></span> %</a></th>
+
+            </tr>
+            <tr>
+                <th><a href="#">Speed:</a></th>
+                <th><a href="#"><span id="speed"></span> km/hr</a></th>
+
+            </tr>
+            <tr>
+                <th><a href="#">Acceleration:</a></th>
+                <th><a href="#"><span id="acceleration"></span> m/s^2</a></th>
+
+            </tr>
+            <tr>
+                <th><a href="#">Box:</a></th>
+                <th><a href="#" ><span id="box_id"></span></a></th>
+
+            </tr>
+            <tr>
+                <th><a href="#">Radio ID:</a></th>
+                <th><a href="#"><span id="id"></span></a></th>
+            </tr>
+
+ 
+
+
+        </table>
+
+        <hr style="height:2px;border-width:0;color:#3F4351;background-color:#3F4351">
+        <a href="#" style="padding: 1px 1px 1px 20px;">Active <span id="active"></span> <span
+                id="active_text"></span></a>
+
+        <hr style="height:2px;border-width:0;color:#3F4351;background-color:#3F4351">
+
+    </div>
+
+    <div id="js-map" class="map"></div>
+
+    <div class="overlay-container">
+        <h7><span class="overlay-text" id="feature-name"></span><br /></h7>
+    </div>
+
+    <script>
+        //   function openNav() {
+        //     document.getElementById("mySidenav").style.width = "250px";
+        //   }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+    </script>
+    <script src="demo_map.js"></script>
+    <script src="./v6.4.3-dist/ol.js"></script>
+</body>
+
+</html>
