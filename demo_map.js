@@ -13,6 +13,37 @@ const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
 const AUTHEN_USER = "aerotest";
 const AUTHEN_PASS = "test1234";
 
+
+var intervaltime = 500;
+var token;
+var id_selected;
+
+var latitude = [];
+var longitude = [];
+var location;
+var date_time = [];
+var id = [];
+var speed = [];
+var active_time = [];
+var acceleration = [];
+var box_id = [];
+var driver = [];
+var vehicle_name = [];
+
+var fuel = [];
+var volt;
+var f_100;
+var f_75;
+var f_50;
+var f_25;
+var f_0;
+
+var feature_point;
+var animate_check = [];
+
+var Marker_type;
+var bomb_duration = 1000;
+
 function init() {
   var center = [100.75049, 13.691678];
   // MAP //
@@ -69,68 +100,84 @@ function init() {
     features: [iconFeature],
   });
 
-  var styles = {
-    Marker_online: new ol.style.Style({
-      image: new ol.style.Icon({
-        anchor: [0.5, 450],
-        anchorXUnits: "fraction",
-        anchorYUnits: "pixels",
-        src: "./pics/bus_pin.png",
-        scale: 0.08,
-        opacity: 1,
-        // color: "#00FB03",
+  function getstyle(marker_label){
+    var styles = {
+      Marker_online: new ol.style.Style({
+        image: new ol.style.Icon({
+          anchor: [0.5, 450],
+          anchorXUnits: "fraction",
+          anchorYUnits: "pixels",
+          src: "./pics/bus_pin.png",
+          scale: 0.08,
+          opacity: 1,
+          // color: "#00FB03",
+        }),
+        text: new ol.style.Text({
+          offsetY: 15,
+          text: marker_label,
+          font: "12px Calibri,sans-serif",
+          fill: new ol.style.Fill({ color: "#000" }),
+          stroke: new ol.style.Stroke({
+            color: "#fff",
+            width: 2,
+          }),
+        }),
+        zIndex: 101,
       }),
-      zIndex: 101,
-    }),
-    Marker_offline: new ol.style.Style({
-      image: new ol.style.Icon({
-        anchor: [0.5, 450],
-        anchorXUnits: "fraction",
-        anchorYUnits: "pixels",
-        src: "./pics/bus_pin.png",
-        scale: 0.08,
-        opacity: 1,
-        color: "#726C6A",
+      Marker_offline: new ol.style.Style({
+        image: new ol.style.Icon({
+          anchor: [0.5, 450],
+          anchorXUnits: "fraction",
+          anchorYUnits: "pixels",
+          src: "./pics/bus_pin.png",
+          scale: 0.08,
+          opacity: 1,
+          color: "#726C6A",
+        }),
+        text: new ol.style.Text({
+          offsetY: 15,
+          text: marker_label,
+          font: "12px Calibri,sans-serif",
+          fill: new ol.style.Fill({ color: "#000" }),
+          stroke: new ol.style.Stroke({
+            color: "#fff",
+            width: 2,
+          }),
+        }),
+        zIndex: 99,
       }),
-    }),
-    zIndex: 99,
-  };
-  var markers = new ol.layer.Vector({
-    source: iconSource,
-    visible: true,
-    title: "marker",
-    zIndex: 100,
-    style: function (feature) {
-      return styles[feature.get("type")];
-    },
-  });
-
-  // Vector Feature Popup Logic
-  const overlayContainerElement = document.querySelector(".overlay-container");
-  const overlayLayer = new ol.Overlay({
-    element: overlayContainerElement,
-  });
-  map.addOverlay(overlayLayer);
-  const overlayFeatureName = document.getElementById("feature-name");
-  overlayLayer.setPosition(undefined);
-
-  map.on("click", function (e) {
-    map.forEachFeatureAtPixel(
-      e.pixel,
-      function (feature, layer) {
-        let id = feature.get("index");
-        id_selected = id;
-        console.log(id_selected);
-        openNav();
-        display(id_selected);
+  
+    };
+    return styles;
+  }
+    var markers = new ol.layer.Vector({
+      source: iconSource,
+      visible: true,
+      title: "marker",
+      zIndex: 100,
+      style: function (feature) {
+        styles = getstyle(feature.get("lable"));
+        return styles[feature.get("type")];
       },
-      {
-        layerFilter: function (layerCandidate) {
-          return layerCandidate.get("title") === "marker";
+    });
+
+  
+    map.on("click", function (e) {
+      map.forEachFeatureAtPixel(
+        e.pixel,
+        function (feature, layer) {
+          let id = feature.get("index");
+          id_selected = id;
+          openNav();
+          display(id_selected);
         },
-      }
-    );
-  });
+        {
+          layerFilter: function (layerCandidate) {
+            return layerCandidate.get("title") === "marker";
+          },
+        }
+      );
+    });
   ////////////////////////////////////
   var baseLayerGroup = new ol.layer.Group({
     layers: [markers, worldImagery, circle],
@@ -140,8 +187,13 @@ function init() {
   // function //
   //////////////
 
+ 
+  // Token
+ // get_token();
+
+
   // Bomb //
-  var duration = 1000;
+ 
 
   function flash(location, i) {
     animate_check[i] = false;
@@ -151,7 +203,7 @@ function init() {
       var vectorContext = ol.render.getVectorContext(event);
       var frameState = event.frameState;
       var elapsed = frameState.time - start;
-      var elapsedRatio = elapsed / duration;
+      var elapsedRatio = elapsed / bomb_duration;
       // radius will be 5 at start and 30 at end.
       var radius = ol.easing.easeOut(elapsedRatio) * 10 + 7;
       var opacity = ol.easing.easeOut(1 - elapsedRatio);
@@ -171,7 +223,7 @@ function init() {
 
       vectorContext.setStyle(style);
       vectorContext.drawFeature(feature, style);
-      if (elapsed > duration + 3000) {
+      if (elapsed > bomb_duration + 3000) {
         ol.Observable.unByKey(listenerKey);
         animate_check[i] = true;
         return;
@@ -181,40 +233,8 @@ function init() {
     }
   }
 
-  var intervaltime = 500;
-  var token;
-  var id_selected;
-
-  var latitude = [];
-  var longitude = [];
-  var location;
-  var date_time = [];
-  var id = [];
-  var speed = [];
-  var active_time = [];
-  var acceleration = [];
-  var box_id = [];
-  var driver = [];
-  var vehicle_name = [];
-
-  var fuel = [];
-  var volt;
-  var f_100;
-  var f_75;
-  var f_50;
-  var f_25;
-  var f_0;
-
-  var geom;
-  var feature_point;
-  var animate_check = [];
-
-  var Marker_type;
-  var startpoint;
-  var PolylineData = [];
-  var route_polyline;
-
   function display(i) {
+
     document.getElementById("id").innerHTML = id[i];
     document.getElementById("speed").innerHTML = speed[i];
     document.getElementById("acceleration").innerHTML = acceleration[i];
@@ -235,6 +255,7 @@ function init() {
   }
 
   function showMarker() {
+
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
@@ -246,6 +267,7 @@ function init() {
           longitude[i] = myObj.results[i].longitude;
 
           if (latitude[i] != 0 && longitude[i] != 0) {
+            location = [parseFloat(longitude[i]), parseFloat(latitude[i])];
             id[i] = myObj.results[i].id;
             speed[i] = Math.floor(myObj.results[i].speed);
             date_time[i] = myObj.results[i].date_time;
@@ -254,24 +276,29 @@ function init() {
             volt = mapval(myObj.results[i].fuel, 0, 4095, 0, 3.3);
 
             if (isEmpty(myObj.results[i].driver)) {
-              // Object is empty (Would return true in this example)
+              // Check if Empty
             } else {
-              // Object is NOT empty
+              //function get driver name//
               driver[i] = myObj.results[i].driver.access_control_code;
             }
 
-            // fuel //vehicle//
             if (isEmpty(myObj.results[i].asset.vehicle)) {
-              // Object is empty (Would return true in this example)
+              // Check if Empty
+              marker_label ="";
             } else {
+              //function get vehicle name//
               vehicle_name[i] = myObj.results[i].asset.vehicle.name;
-              // Object is NOT empty
+
+              //map.getView().getZoom() > 13 ? marker_label= vehicle_name[i]:"";
+              marker_label = vehicle_name[i];
+
+              //function Fuel Level//
               f_100 = myObj.results[i].asset.vehicle.batt_max;
               f_50 = myObj.results[i].asset.vehicle.batt_half;
               f_0 = myObj.results[i].asset.vehicle.batt_min;
               f_75 = f_middle(f_100, f_50);
               f_25 = f_middle(f_50, f_0);
-
+             
               if (volt >= f_75) {
                 fuel[i] = Math.floor(mapval(volt, f_75, f_100, 75, 100));
               } else if (volt >= f_50) {
@@ -283,8 +310,35 @@ function init() {
               }
             }
 
-            location = [parseFloat(longitude[i]), parseFloat(latitude[i])];
-            active_time[i] = diff_minutes(i);
+          // hide label
+           //if( map.getView().getZoom() < 15) { marker_label= "";}
+            //function time//
+
+            sds_datetime = date_time[i].split("T");
+            sds_date = sds_datetime[0].split("-");
+            sds_date_y = parseInt(sds_date[0]);
+            sds_date_m = parseInt(sds_date[1]) - 1;
+            sds_date_d = parseInt(sds_date[2]);
+
+            sds_time = sds_datetime[1].split(":");
+            sds_time_h = parseInt(sds_time[0]) + 7;
+            sds_time_m = parseInt(sds_time[1]);
+            sds_time_s = parseInt(sds_time[2].split("z"));
+  
+            todayDate = new Date();
+            dateOne = new Date(
+              sds_date_y,
+              sds_date_m,
+              sds_date_d,
+              sds_time_h,
+              sds_time_m,
+              sds_time_s
+            );
+
+            active_time[i] = Math.round((todayDate - dateOne) / 1000 / 60);
+
+            //function Markers Animate//
+
             if (active_time[i] > 2) {
               Marker_type = "Marker_offline";
             } else {
@@ -307,17 +361,27 @@ function init() {
 
             feature_point.setProperties({
               index: i,
-              id: myObj.results[i].id,
-              speed: myObj.results[i].speed,
-              time: myObj.results[i].date_time,
+              lable:marker_label,
             });
             iconSource.addFeature(feature_point);
             console.log(myObj);
+            console.log(token);
+            //overlayFeatureName.innerHTML = vehicle_name[i];
+
+            // function Alert
+            // overlayLayer.setPosition //
+
+            //  if(acceleration[i]>1 &&log_time[i]!=dateOne.valueOf()){
+
+            // log_time[i] = dateOne.valueOf();
+            //   alert(vehicle_name[i]+" is hitting the brakes suddenly. (" + acceleration[i] + " m/s^2)" );
+            //  }
           }
         }
         if (myObj == 0) {
           return;
         }
+
         display(id_selected);
       } else if (this.readyState == 4 && this.status == 401) {
         get_token();
@@ -365,30 +429,7 @@ function init() {
 
   let intervalId = setInterval(showMarker, intervaltime);
 
-  function diff_minutes(i) {
-    var sds_datetime = date_time[i].split("T");
-    sds_date = sds_datetime[0].split("-");
-    sds_date_y = parseInt(sds_date[0]);
-    sds_date_m = parseInt(sds_date[1]) - 1;
-    sds_date_d = parseInt(sds_date[2]);
-
-    sds_time = sds_datetime[1].split(":");
-    sds_time_h = parseInt(sds_time[0]) + 7;
-    sds_time_m = parseInt(sds_time[1]);
-
-    var todayDate = new Date();
-    var dateOne = new Date(
-      sds_date_y,
-      sds_date_m,
-      sds_date_d,
-      sds_time_h,
-      sds_time_m
-    );
-    var dif = todayDate - dateOne;
-    var dif = Math.round(dif / 1000 / 60);
-
-    return dif;
-  }
+  
 
   function f_middle(max, min) {
     return (max - min) / 2 + min;
