@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  agos-map:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/share/nginx/html
+    ports:
+      - 7000:80
+    networks:
+      - agos_server_agos_server_network
+
+networks:
+  agos_server_agos_server_network:
+    external: true

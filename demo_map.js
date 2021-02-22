@@ -1,4 +1,18 @@
 window.onload = init;
+
+const SERVER_URL = "http://localhost";
+const SERVER_PORT = "8000";
+const ASSET_TRACKING_ENDPOINT = "/api/asset_tracking/";
+const AUTHEN_ENDPOINT = "/o/token/";
+
+const AUTHEN_CLIENT_ID = "ambZViQ35gyfwTkqdnxbQCjPPsGGo9NMFNXeZm91";
+const AUTHEN_CLIENT_SECRET =
+  "oCGC642skgXPbz3wX3GYuBXHNOsRkpXd56yhHI7RsiSkfFMXbgb1fXQFiqQVaYGeSBwfleWPY0SoQtFGPht7KSXdHBqtDdxblvQJAnA6TmuJzidsmxoVhrv9eyh3EUAM";
+const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
+
+const AUTHEN_USER = "aerotest";
+const AUTHEN_PASS = "test1234";
+
 function init() {
   var center = [100.75049, 13.691678];
   // MAP //
@@ -21,9 +35,6 @@ function init() {
       maxZoom: 19,
     }),
   });
-
-
-
 
   var geoMarker = new ol.Feature({});
   var circleFeature = new ol.Feature({});
@@ -122,7 +133,7 @@ function init() {
   });
   ////////////////////////////////////
   var baseLayerGroup = new ol.layer.Group({
-    layers: [ markers, worldImagery, circle],
+    layers: [markers, worldImagery, circle],
   });
   map.addLayer(baseLayerGroup);
   //////////////
@@ -132,7 +143,7 @@ function init() {
   // Bomb //
   var duration = 1000;
 
-  function flash(location,i) {
+  function flash(location, i) {
     animate_check[i] = false;
     var start = new Date().getTime();
     var listenerKey = circle.on("postrender", animate);
@@ -160,9 +171,9 @@ function init() {
 
       vectorContext.setStyle(style);
       vectorContext.drawFeature(feature, style);
-      if (elapsed > duration+3000) {
+      if (elapsed > duration + 3000) {
         ol.Observable.unByKey(listenerKey);
-        animate_check[i]  = true;
+        animate_check[i] = true;
         return;
       }
       // tell OpenLayers to continue postrender animation
@@ -181,12 +192,12 @@ function init() {
   var id = [];
   var speed = [];
   var active_time = [];
-  var acceleration =[];
-  var box_id =[];
-  var driver =[];
-  var vehicle_name =[];
+  var acceleration = [];
+  var box_id = [];
+  var driver = [];
+  var vehicle_name = [];
 
-  var fuel =[];
+  var fuel = [];
   var volt;
   var f_100;
   var f_75;
@@ -196,8 +207,8 @@ function init() {
 
   var geom;
   var feature_point;
-  var animate_check=[];
-  
+  var animate_check = [];
+
   var Marker_type;
   var startpoint;
   var PolylineData = [];
@@ -216,13 +227,10 @@ function init() {
       document.getElementById("active").innerHTML = active_time[i];
       document.getElementById("active").style.color = "red";
       document.getElementById("active_text").innerHTML = "minutes ago";
-
     } else {
       document.getElementById("active").innerHTML = "Now";
       document.getElementById("active_text").innerHTML = "";
       document.getElementById("active").style.color = "#A0F961";
-      
-
     }
   }
 
@@ -231,80 +239,66 @@ function init() {
     xmlhttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
         var myObj = this.response;
-        
-
 
         iconSource.clear();
         for (i = 0; i < myObj.count; i++) {
-
           latitude[i] = myObj.results[i].latitude;
           longitude[i] = myObj.results[i].longitude;
 
           if (latitude[i] != 0 && longitude[i] != 0) {
-
             id[i] = myObj.results[i].id;
             speed[i] = Math.floor(myObj.results[i].speed);
             date_time[i] = myObj.results[i].date_time;
             acceleration[i] = Math.floor(myObj.results[i].acceleration);
             box_id[i] = myObj.results[i].box;
-            volt  = mapval(myObj.results[i].fuel,0,4095,0,3.3);
-         
-            if(isEmpty(myObj.results[i].driver)) {
+            volt = mapval(myObj.results[i].fuel, 0, 4095, 0, 3.3);
+
+            if (isEmpty(myObj.results[i].driver)) {
               // Object is empty (Would return true in this example)
-          } else {
+            } else {
               // Object is NOT empty
               driver[i] = myObj.results[i].driver.access_control_code;
-          } 
-
-           // fuel //vehicle//
-           if(isEmpty(myObj.results[i].asset.vehicle)) {
-            // Object is empty (Would return true in this example)
-        } else {
-
-            vehicle_name[i] = myObj.results[i].asset.vehicle.name;
-            // Object is NOT empty
-            f_100 =myObj.results[i].asset.vehicle.batt_max;
-            f_50  =myObj.results[i].asset.vehicle.batt_half;
-            f_0 =myObj.results[i].asset.vehicle.batt_min;
-            f_75= f_middle(f_100,f_50);
-            f_25= f_middle(f_50,f_0);
-   
-            if(volt>=f_75){
-              fuel[i] = Math.floor(mapval(volt,f_75,f_100,75,100));
             }
-            else if(volt>=f_50){
-              fuel[i] = Math.floor(mapval(volt,f_50,f_75,50,75));
+
+            // fuel //vehicle//
+            if (isEmpty(myObj.results[i].asset.vehicle)) {
+              // Object is empty (Would return true in this example)
+            } else {
+              vehicle_name[i] = myObj.results[i].asset.vehicle.name;
+              // Object is NOT empty
+              f_100 = myObj.results[i].asset.vehicle.batt_max;
+              f_50 = myObj.results[i].asset.vehicle.batt_half;
+              f_0 = myObj.results[i].asset.vehicle.batt_min;
+              f_75 = f_middle(f_100, f_50);
+              f_25 = f_middle(f_50, f_0);
+
+              if (volt >= f_75) {
+                fuel[i] = Math.floor(mapval(volt, f_75, f_100, 75, 100));
+              } else if (volt >= f_50) {
+                fuel[i] = Math.floor(mapval(volt, f_50, f_75, 50, 75));
+              } else if (volt >= f_25) {
+                fuel[i] = Math.floor(mapval(volt, f_25, f_50, 25, 50));
+              } else if (volt >= f_0) {
+                fuel[i] = Math.floor(mapval(volt, f_0, f_25, 0, 25));
+              }
             }
-            else if(volt>=f_25){
-              fuel[i] = Math.floor(mapval(volt,f_25,f_50,25,50));
-            }
-            else if(volt>=f_0){
-              fuel[i] = Math.floor(mapval(volt,f_0,f_25,0,25));
-            }
-        } 
-
-
-
-
 
             location = [parseFloat(longitude[i]), parseFloat(latitude[i])];
             active_time[i] = diff_minutes(i);
             if (active_time[i] > 2) {
               Marker_type = "Marker_offline";
-
             } else {
               Marker_type = "Marker_online";
-       
-              if ((animate_check[i] != false)) {
+
+              if (animate_check[i] != false) {
                 feature_animate = new ol.Feature({
                   geometry: new ol.geom.Point(ol.proj.fromLonLat(location)),
                 });
                 circleSource.addFeature(feature_animate);
 
-                flash(location,i);
+                flash(location, i);
               }
             }
-
 
             feature_point = new ol.Feature({
               type: Marker_type,
@@ -325,13 +319,18 @@ function init() {
           return;
         }
         display(id_selected);
-
       } else if (this.readyState == 4 && this.status == 401) {
         get_token();
+      } else {
+        console.log("None of above");
       }
     };
 
-    xmlhttp.open("GET", "http://110.77.148.104:8000/api/asset_tracking/", true);
+    xmlhttp.open(
+      "GET",
+      SERVER_URL + ":" + SERVER_PORT + ASSET_TRACKING_ENDPOINT,
+      true
+    );
     xmlhttp.setRequestHeader("Authorization", "Bearer " + token);
     xmlhttp.responseType = "json";
     xmlhttp.send();
@@ -345,20 +344,23 @@ function init() {
         token = myObj.access_token;
       }
     };
-    xmlhttp.open("POST", "http://110.77.148.104:8000/o/token/", true);
+    xmlhttp.open(
+      "POST",
+      SERVER_URL + ":" + SERVER_PORT + AUTHEN_ENDPOINT,
+      true
+    );
     xmlhttp.setRequestHeader(
       "Content-type",
       "application/x-www-form-urlencoded"
     );
     xmlhttp.setRequestHeader(
       "Authorization",
-      "Basic " +
-        btoa(
-          "ambZViQ35gyfwTkqdnxbQCjPPsGGo9NMFNXeZm91:oCGC642skgXPbz3wX3GYuBXHNOsRkpXd56yhHI7RsiSkfFMXbgb1fXQFiqQVaYGeSBwfleWPY0SoQtFGPht7KSXdHBqtDdxblvQJAnA6TmuJzidsmxoVhrv9eyh3EUAM"
-        )
+      "Basic " + btoa(AUTHEN_CLIENT_ID + ":" + AUTHEN_CLIENT_SECRET)
     );
     xmlhttp.responseType = "json";
-    xmlhttp.send("grant_type=password&username=aerotest&password=test1234");
+    xmlhttp.send(
+      "grant_type=password&username=" + AUTHEN_USER + "&password=" + AUTHEN_PASS
+    );
   }
 
   let intervalId = setInterval(showMarker, intervaltime);
@@ -387,24 +389,22 @@ function init() {
 
     return dif;
   }
-  
-  function f_middle(max,min) {
-    return ((max-min)/2)+min;
-  }
 
+  function f_middle(max, min) {
+    return (max - min) / 2 + min;
+  }
 
   function openNav() {
     document.getElementById("mySidenav").style.width = "350px";
   }
-  function mapval(x,in_min, in_max,out_min, out_max) {
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  function mapval(x, in_min, in_max, out_min, out_max) {
+    return ((x - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
   }
   function isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) return false;
     }
     return true;
-}
+  }
   ////////////////////////////////////
 }
