@@ -461,7 +461,7 @@ function init() {
 
             socket.onerror = function (error) {
               console.log(`A [error] ${error.message}`);
-              showMarker();
+              location.reload();
             };
           }
         }
