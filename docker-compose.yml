@@ -10,8 +10,8 @@ services:
     ports:
       - 7000:80
     networks:
-      - agos_server_agos_server_network
+      - agos_dj_agos_server_network
 
 networks:
-  agos_server_agos_server_network:
+  agos_dj_agos_server_network:
     external: true
