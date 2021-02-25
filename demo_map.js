@@ -455,7 +455,7 @@ function init() {
                 // e.g. server process killed or network down
                 // event.code is usually 1006 in this case
                 console.log("B [close] Connection died");
-                showMarker();
+                location.reload();
               }
             };
 
