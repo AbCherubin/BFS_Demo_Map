@@ -254,7 +254,9 @@ function init() {
     document.getElementById("driver").innerHTML = driver[i];
     document.getElementById("fuel").innerHTML = fuel[i];
     document.getElementById("vehicle_name").innerHTML = vehicle_name[i];
-    document.getElementById("vehicle_img").src = vehicle_img[i];
+    if(vehicle_img[i]!=null){
+      document.getElementById("vehicle_img").src = vehicle_img[i];}
+  
     var now = new Date();
     active_time[i] = Math.round(
       (now - time[i]) / 1000 / 60
@@ -306,7 +308,7 @@ function init() {
               // Set Up
               var myObjWS = JSON.parse(event.data);
 
-              vehicle_img[index] = "./pics/aero.png";
+             
 
               index = obj_data[myObjWS.id];
               latitude[index] = myObjWS.latitude;
@@ -329,7 +331,7 @@ function init() {
 
               if (isEmpty(myObjWS.asset.vehicle)) {
                 // Check if Empty
-           
+                vehicle_img[index] = "./pics/aero.png";
               } else {
                 //function get vehicle name//
                 vehicle_name[index] = myObjWS.asset.vehicle.name;
