@@ -305,6 +305,9 @@ function init() {
             socket.onmessage = function (event) {
               // Set Up
               var myObjWS = JSON.parse(event.data);
+
+              vehicle_img[index] = "./pics/aero.png";
+
               index = obj_data[myObjWS.id];
               latitude[index] = myObjWS.latitude;
               longitude[index] = myObjWS.longitude;
@@ -336,8 +339,11 @@ function init() {
                 else if(vehicle_name[index].includes("TRE")){
                   vehicle_img[index] = "./pics/TLD.png";
                 }
-                else if(vehicle_name[index].includes("AT")){
+                else if(vehicle_name[index].includes("BFS-AT")){
                   vehicle_img[index] = "./pics/TMX.png";
+                }
+                else if(vehicle_name[index].includes("AT-05")){
+                  vehicle_img[index] = "./pics/AT-05.png";
                 }
                 else{
                   vehicle_img[index] = "./pics/aero.png";
@@ -426,8 +432,14 @@ function init() {
                   });
     
                   if (check_init_feature[j] == true) {
-                    feature = iconSource.getFeatureById(j);
-                    iconSource.removeFeature(feature);
+                    try {
+                      feature = iconSource.getFeatureById(j);
+                      iconSource.removeFeature(feature);
+                    }
+                    catch(err) {
+                      console.log(err.message);
+                      showMarker();
+                    }
                    // let intervalId = setInterval(check_alive, 2000);
                   }
                   feature_point.setId(j);
