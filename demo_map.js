@@ -16,8 +16,8 @@ const AUTHEN_USER = "aerotest";
 const AUTHEN_PASS = "test1234";
 
 function init() {
-//  var token = "mxshs8DSnepC7Dvc7NuHPthlNwaIay";
-  var token;
+
+  var token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
   var id_selected;
   var obj_data = {};
   var index;
