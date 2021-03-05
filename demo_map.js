@@ -18,6 +18,7 @@ const AUTHEN_PASS = "test1234";
 function init() {
 
   var token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
+ 
   var id_selected;
   var obj_data = {};
   var index;
@@ -41,6 +42,7 @@ function init() {
   var box_id = [];
   var driver = [];
   var vehicle_name = [];
+  var vehicle_img = [];
   var log_time = [];
 
   var fuel = [];
@@ -252,6 +254,7 @@ function init() {
     document.getElementById("driver").innerHTML = driver[i];
     document.getElementById("fuel").innerHTML = fuel[i];
     document.getElementById("vehicle_name").innerHTML = vehicle_name[i];
+    document.getElementById("vehicle_img").src = vehicle_img[i];
     var now = new Date();
     active_time[i] = Math.round(
       (now - time[i]) / 1000 / 60
@@ -327,7 +330,18 @@ function init() {
               } else {
                 //function get vehicle name//
                 vehicle_name[index] = myObjWS.asset.vehicle.name;
-
+                if (vehicle_name[index].includes("TRD")) {
+                  vehicle_img[index] = "./pics/TRD.png";
+                }
+                else if(vehicle_name[index].includes("TRE")){
+                  vehicle_img[index] = "./pics/TLD.png";
+                }
+                else if(vehicle_name[index].includes("AT")){
+                  vehicle_img[index] = "./pics/TMX.png";
+                }
+                else{
+                  vehicle_img[index] = "./pics/aero.png";
+                }
                 //map.getView().getZoom() > 13 ? marker_label= vehicle_name[i]:"";
                
 
