@@ -3,19 +3,75 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-
+    <meta http-equiv="Cache-control" content="public" />
     <title>Openlayers web map</title>
 
+    <link rel="stylesheet" href="./fontawesome-free-5.15.2-web/css/all.css" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./v6.4.3-dist/ol.css" />
     <style>
-       img {
+      .btna {
+        background-color: rgba(255, 63, 42, 0.9);
+        /* Blue background */
+        border: none;
+        /* Remove borders */
+        color: white;
+        /* White text */
+        padding: 8px 12px;
+        /* Some padding */
+        font-size: 14px;
+        /* Set a font size */
+        cursor: pointer;
+        /* Mouse pointer on hover */
+        outline: none;
+        font-family: "Lucida Console", "Courier New", monospace;
+        border-radius: 2px;
+      }
+
+      .btna .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        padding: 2.5px 8px;
+        border-radius: 50%;
+        background-color: white;
+        color: black;
+        opacity: 0.9;
+      }
+
+      .btna:hover {
+        background-color: rgb(241, 24, 0);
+      }
+
+      .btn {
+        background-color: DodgerBlue;
+        /* Blue background */
+        border: none;
+        /* Remove borders */
+        color: white;
+        /* White text */
+        padding: 10px 14px;
+        /* Some padding */
+        font-size: 14px;
+        /* Set a font size */
+        cursor: pointer;
+        /* Mouse pointer on hover */
+        outline: none;
+      }
+
+      /* Darker background on mouse-over */
+      .btn:hover {
+        background-color: RoyalBlue;
+      }
+
+      img {
         display: block;
         margin-left: auto;
         margin-right: auto;
       }
+
       body {
-        font-family: "Lucida Console", "Courier New", monospace;
+        font-family: Arial, Helvetica, sans-serif;
       }
 
       .sidenav table {
@@ -29,26 +85,43 @@
         padding: 1px;
       }
 
-      .overlay-container {
-        /* background-color:white; */
-        width: 50px;
-        height: 15px;
+      /* map tag*/
 
-        -webkit-text-stroke: 0.25px black;
+      .alert {
+        padding: 8px;
+        background-color: #f44336;
         color: white;
+        opacity: 0.9;
+        transition: opacity 0.6s;
 
-        line-height: 1em;
-        cursor: default;
-        text-align: center;
-        font-size: 14px;
-        border-radius: 0px;
-        padding: 0px 0;
-        position: absolute;
-        z-index: 999;
-        bottom: 100%;
-        left: 50%;
-        margin-left: -22px;
-        margin-bottom: -20px;
+        z-index: 2;
+      }
+
+      .alert.success {
+        background-color: #4caf50;
+      }
+
+      .alert.info {
+        background-color: #2196f3;
+      }
+
+      .alert.warning {
+        background-color: #ff9800;
+      }
+
+      .closebtn {
+        margin-left: 15px;
+        color: white;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .closebtn:hover {
+        color: black;
       }
 
       .sidenav {
@@ -112,6 +185,92 @@
           font-size: 18px;
         }
       }
+
+      .open-button {
+        background-color: #555;
+        color: white;
+        padding: 16px 20px;
+        border: none;
+        cursor: pointer;
+        opacity: 0.8;
+        position: fixed;
+        bottom: 23px;
+        right: 28px;
+        width: 280px;
+      }
+
+      /* The popup form - hidden by default */
+      .form-popup {
+        display: none;
+        position: absolute;
+        font-family: Arial, Helvetica, sans-serif;
+        z-index: 9;
+      }
+
+      /* Add styles to the form container */
+      .form-container {
+        width: 350px;
+        padding: 10px;
+        opacity: 0.98;
+        background-color: white;
+      }
+
+      .form-container table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14px;
+      }
+
+      .form-container td,
+      .form-container th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 2px;
+      }
+
+      /* Full-width input fields */
+      .form-container input[type="text"] {
+        padding: 4px;
+        width: auto;
+        margin: 0px 0 0px 0;
+        border: none;
+      }
+
+      /* 
+
+      /* When the inputs get focus, do something */
+      .form-container input[type="text"]:focus {
+        background-color: #ddd;
+        outline: none;
+      }
+
+      /* Set a style for the submit/login button */
+      .form-container .btn {
+        background-color: #34495e;
+        color: white;
+        padding: 2px 6px;
+        cursor: pointer;
+        width: auto;
+        margin-bottom: 4px;
+        opacity: 1;
+        border-radius: 2px;
+      }
+
+      /* Add a red background color to the cancel button */
+      .form-container .cancel {
+        background-color: #a4a4a4;
+      }
+
+      .form-container .delete {
+        background-color: #ffffff;
+        color: red;
+      }
+
+      /* Add some hover effects to buttons */
+      .form-container .btn:hover,
+      .open-button:hover {
+        opacity: 0.8;
+      }
     </style>
   </head>
 
@@ -121,8 +280,16 @@
         >&times;</a
       >
 
-      <img id="vehicle_img" src="./pics/aero.png" style="height:30%"/>
+      <img
+        id="vehicle_img"
+        alt="Vehicle"
+        src="./pics/TMX.png"
+        style="height: 30%"
+      />
+
       <a href="#" style="padding: 2px 2px 2px 20px"><b>PlayBack</b></a>
+      <!-- <a href="./playback.html" target="_blank" style="padding: 2px 2px 2px 20px;"><b>PlayBack</b></a> -->
+
       <hr
         style="
           height: 2px;
@@ -147,7 +314,23 @@
         <tr>
           <th><a href="#">Fuel:</a></th>
           <th>
-            <a href="#"><span id="fuel"></span> %</a>
+            <div
+              class="w3-light-grey"
+              style="
+                margin-left: 10%;
+                margin-top: 8%;
+                width: 120px;
+                height: 16px;
+              "
+            >
+              <div
+                id="fuel"
+                class="w3-container w3-green"
+                style="width: 100%; height: 100%"
+              >
+                100%
+              </div>
+            </div>
           </th>
         </tr>
         <tr>
@@ -159,7 +342,7 @@
         <tr>
           <th><a href="#">Acceleration:</a></th>
           <th>
-            <a href="#"><span id="acceleration"></span> m/s^2</a>
+            <a href="#"><span id="acceleration"></span> m/s<sup>2</sup></a>
           </th>
         </tr>
         <tr>
@@ -199,16 +382,101 @@
     </div>
 
     <div id="js-map" class="map"></div>
-
-    <div class="overlay-container">
-      <h7><span class="overlay-text" id="feature-name"></span><br /></h7>
+    <div
+      style="
+        position: absolute;
+        top: 10px;
+        left: 45px;
+        padding: 5px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 2px;
+      "
+    >
+      <button
+        id="geofencing"
+        class="btn"
+        style="
+          font-family: 'Lucida Console', 'Courier New', monospace;
+          border-radius: 2px;
+        "
+      >
+        <i class="fas fa-draw-polygon"></i> Geofencing
+      </button>
     </div>
+    <div
+      id="alert_info"
+    ></div>
 
+    <div class="form-popup" id="myForm">
+      <form class="form-container">
+        <table>
+          <tr>
+            <th>Name:</th>
+            <th>
+              <input
+                id="geoName"
+                type="text"
+                aria-labelledby="geoName"
+                style="margin-left: 5px"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>Speed Limit:</th>
+            <th>
+              <input
+                id="geoSpeed"
+                type="number"
+                style="margin-left: 6px; border: none"
+                aria-labelledby="geoSpeed"
+              />
+            </th>
+          </tr>
+          <tr>
+            <th>Area:</th>
+            <th>
+              <h10 id="geoArea" style="color: #767675; margin-left: 7px"></h10>
+            </th>
+          </tr>
+          
+        </table>
+        <hr
+          style="
+            height: 1px;
+            border-width: 0;
+            color: #3f4351;
+            background-color: #3f4351;
+          "
+        />
+        <button id="geosave" type="submit" class="btn" style="float: left">
+          Save
+        </button>
+        <button
+          type="button"
+          class="btn cancel"
+          style="margin-right: 0"
+          onclick="closeForm()"
+        >
+          Close
+        </button>
+        <button
+          id="geodelete"
+          type="button"
+          class="btn delete"
+          style="float: right"
+        >
+          <i class="fas fa-window-close"></i> Delete feature
+        </button>
+      </form>
+    </div>
     <script>
       //   function openNav() {
       //     document.getElementById("mySidenav").style.width = "250px";
       //   }
-
+   
+      function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+      }
       function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
       }
