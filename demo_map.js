@@ -849,6 +849,7 @@ function init() {
         vectorSource.addFeature(polyFeature);
 
         document.getElementById("myForm").style.display = "none";
+        geoFeature = null;
         geo = null;
         return;
       }
