@@ -883,12 +883,12 @@ function init() {
       " >>> "+geo_object;
 
     var newSpan = document.createElement("span");
-    newSpan.setAttribute("class", "closebtn");
+    newSpan.setAttribute("class", "closebtngeo");
     newSpan.innerHTML = "&times;";
     newDiv.appendChild(newSpan);
     document.getElementById("alert_info").appendChild(newDiv);
 
-    var close = document.getElementsByClassName("closebtn");
+    var close = document.getElementsByClassName("closebtngeo");
 
     setTimeout(function () {
       newDiv.style.display = "none";
