@@ -540,6 +540,8 @@ function init() {
                   vehicle_img[index] = "./pics/TMX.png";
                 } else if (vehicle_name[index].includes("AT-05")) {
                   vehicle_img[index] = "./pics/AT-05.png";
+                }else if (vehicle_name[index].includes("BFS-PB")) {
+                  vehicle_img[index] = "./pics/BUS.png";
                 } else {
                   vehicle_img[index] = "./pics/aero.png";
                 }
