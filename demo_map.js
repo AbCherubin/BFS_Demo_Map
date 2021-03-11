@@ -18,7 +18,7 @@ const AUTHEN_PASS = "test1234";
 function init() {
   var token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
 
-  var dis_vehicle = [7509671, 7530863];
+  var dis_vehicle = [7509671, 7530863,7509669];
 
   var id_selected;
   var obj_data = {};
@@ -70,7 +70,7 @@ function init() {
   var geo_object = [];
   var geo_index = 1;
   var geoFeature_id;
-  var center = [100.75458526611328, 13.700362463830118];
+  var center = [100.75321197509766, 13.696901811402448];
   // MAP //
   var map = new ol.Map({
     //C
@@ -259,6 +259,7 @@ function init() {
       },
       {
         layerFilter: function (layerCandidate) {
+          console.log(layerCandidate.get("title"));
           return layerCandidate.get("title") === "marker";
         },
       }
@@ -412,20 +413,23 @@ function init() {
   }
 
   function display(i) {
+    document.getElementById("playback").href =
+      "./playback.html?a=" + id[i] + "&n=" + vehicle_name[i];
+
     document.getElementById("id").innerHTML = id[i];
     document.getElementById("speed").innerHTML = speed[i];
     document.getElementById("acceleration").innerHTML = acceleration[i];
     document.getElementById("box_id").innerHTML = box_id[i];
-
     if (box_id[i]) {
       if (box_id[i].includes("4G")) {
         document.getElementById("Interface").innerHTML = "Interface ID";
+      } else {
+        document.getElementById("Interface").innerHTML = "Radio ID";
       }
-      else{ document.getElementById("Interface").innerHTML = "Radio ID";}
     } else {
       document.getElementById("Interface").innerHTML = "Interface ID";
     }
-    
+
     document.getElementById("driver").innerHTML = driver[i];
 
     if (fuel[i]) {
@@ -521,7 +525,7 @@ function init() {
               if (myObjWS.box != null) {
                 box_id[index] = myObjWS.box.name;
               }
-              volt = mapval(myObjWS.fuel, 0, 4095, 0, 3.3);
+              
               circle_location = [
                 parseFloat(longitude[index]),
                 parseFloat(latitude[index]),
@@ -550,13 +554,13 @@ function init() {
                   vehicle_img[index] = "./pics/TMX.png";
                 } else if (vehicle_name[index].includes("AT-05")) {
                   vehicle_img[index] = "./pics/AT-05.png";
-                }else if (vehicle_name[index].includes("BFS-PB")) {
+                } else if (vehicle_name[index].includes("BFS-PB")) {
                   vehicle_img[index] = "./pics/BUS.png";
                 } else {
                   vehicle_img[index] = "./pics/aero.png";
                 }
                 //map.getView().getZoom() > 13 ? marker_label= vehicle_name[i]:"";
-
+                volt = mapval(myObjWS.fuel, 0, 4095, 0, 3.3);
                 //function Fuel Level//
                 f_100 = myObjWS.asset.vehicle.batt_max;
                 f_50 = myObjWS.asset.vehicle.batt_half;
@@ -862,7 +866,6 @@ function init() {
 
         document.getElementById("myForm").style.display = "none";
         geoFeature = null;
-        geo = null;
         return;
       }
     }
@@ -892,7 +895,8 @@ function init() {
       "<i class='fa fa-exclamation-triangle' aria-hidden='true'></i> <strong> Alert!</strong> " +
       vehicle_name +
       text +
-      " >>> "+geo_object;
+      " >>> " +
+      geo_object;
 
     var newSpan = document.createElement("span");
     newSpan.setAttribute("class", "closebtngeo");
@@ -933,7 +937,8 @@ function init() {
       "<i class='fa fa-info-circle' aria-hidden='true'></i> <strong> Info!</strong> " +
       vehicle_name +
       text +
-      " >>> "+geo_object;
+      " >>> " +
+      geo_object;
 
     var newSpan = document.createElement("span");
     newSpan.setAttribute("class", "closebtngeo");
@@ -949,10 +954,9 @@ function init() {
 
     for (i = 0; i < close.length; i++) {
       close[i].onclick = function () {
-        var div = this.parentElement;
-        div.style.opacity = "0";
+        newDiv.style.opacity = "0";
         setTimeout(function () {
-          div.style.display = "none";
+          newDiv.style.display = "none";
         }, 800);
       };
     }
