@@ -631,7 +631,7 @@ function init() {
     var value = slideCol.value;
   
     var p = document.getElementById("play");
-
+   
     if (p.innerHTML.includes("play-circle") ){
       p.innerHTML = "<i class='far fa-stop-circle'></i>";
       function myLoop() {
@@ -653,10 +653,33 @@ function init() {
       clearTimeout(myVar);
     }
 
+    slideCol.onchange=function () {
+      clearTimeout(myVar);
+     max = slideCol.max;
+    value = slideCol.value;
+      if (p.innerHTML.includes("stop-circle") ){
+        function myLoop() {
+          //  create a loop function
+          myVar=setTimeout(function () {
+            //  call a 3s setTimeout when the loop is called
+            showmark(value); //  your code here
+            value++;
+            slideCol.value = value; //  increment the counter
+            if (value <= max) {
+              //  if the counter < 10, call the loop function
+              myLoop(); //  ..  again which will trigger another
+            } //  ..  setTimeout()
+          }, 200);
+        }
+        myLoop();
+      } 
+    };
+  
    
   }
 
   slideCol.oninput = function () {
+    clearTimeout(myVar);
     showmark(this.value);
   };
   startButton.addEventListener("click", start, false);
