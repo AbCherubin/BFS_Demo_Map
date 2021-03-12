@@ -723,13 +723,13 @@ function init() {
                 // e.g. server process killed or network down
                 // event.code is usually 1006 in this case
                 console.log("B [close] Connection died");
-                showMarker();
+                setTimeout(showMarker(), 2000);
               }
             };
 
             socket.onerror = function (error) {
               console.log(`A [error] ${error.message}`);
-              showMarker();
+              setTimeout(showMarker(), 2000);
             };
           }
         }
@@ -737,8 +737,14 @@ function init() {
           return;
         }
       } else if (this.readyState == 4 && this.status == 401) {
-        get_token();
-        showMarker();
+        console.log("reconnecting");
+        setTimeout(get_token(), 2000);
+        setTimeout(showMarker(), 2000);
+        
+      }else{
+        console.log("reconnecting");
+        setTimeout(showMarker(), 2000);
+        
       }
     };
 
