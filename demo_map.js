@@ -744,7 +744,7 @@ function init() {
         // get_token();
         showMarker();
       }
-      else{ showMarker();}
+     
     };
 
     xmlhttp.open(
