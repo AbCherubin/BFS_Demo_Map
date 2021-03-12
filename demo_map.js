@@ -14,10 +14,14 @@ const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
 
 const AUTHEN_USER = "aerotest";
 const AUTHEN_PASS = "test1234";
+
 const token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
+
+
+
 function init() {
-
-
+  
+  // console.log(token);
   var dis_vehicle = [7509671, 7530863,7509669];
 
   var id_selected;
@@ -723,13 +727,13 @@ function init() {
                 // e.g. server process killed or network down
                 // event.code is usually 1006 in this case
                 console.log("B [close] Connection died");
-                setTimeout(showMarker(), 2000);
+                showMarker();
               }
             };
 
             socket.onerror = function (error) {
               console.log(`A [error] ${error.message}`);
-              setTimeout(showMarker(), 2000);
+              showMarker();
             };
           }
         }
@@ -737,14 +741,8 @@ function init() {
           return;
         }
       } else if (this.readyState == 4 && this.status == 401) {
-        console.log("reconnecting");
-        setTimeout(get_token(), 2000);
-        setTimeout(showMarker(), 2000);
-        
-      }else{
-        console.log("reconnecting");
-        setTimeout(showMarker(), 2000);
-        
+        // get_token();
+        showMarker();
       }
     };
 
@@ -753,6 +751,7 @@ function init() {
       SERVER_URL + ":" + SERVER_PORT + ASSET_TRACKING_ENDPOINT,
       true
     );
+    // xmlhttp.withCredentials = true;
     xmlhttp.setRequestHeader("Authorization", "Bearer " + token);
     xmlhttp.responseType = "json";
     xmlhttp.send();
