@@ -14,9 +14,9 @@ const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
 
 const AUTHEN_USER = "aerotest";
 const AUTHEN_PASS = "test1234";
-
+const token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
 function init() {
-  var token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
+
 
   var dis_vehicle = [7509671, 7530863,7509669];
 
