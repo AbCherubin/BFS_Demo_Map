@@ -3,7 +3,7 @@ window.onload = init;
 const SERVER_URL = "http://110.77.148.104";
 const WS_URL = "ws://110.77.148.104";
 const WS_ENDPOINT = "/ws/live/";
-const SERVER_PORT = "8000";
+const SERVER_PORT = "8888";
 const ASSET_TRACKING_ENDPOINT = "/api/asset_tracking/";
 const AUTHEN_ENDPOINT = "/o/token/";
 
@@ -15,9 +15,11 @@ const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
 const AUTHEN_USER = "aerotest";
 const AUTHEN_PASS = "test1234";
 
-const token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
+
+var current_url = new URL(window.location.href);
 
 
+const token = current_url.searchParams.get("t");
 
 function init() {
   
@@ -742,7 +744,8 @@ function init() {
         }
       } else if (this.readyState == 4 && this.status == 401) {
         // get_token();
-        showMarker();
+        //showMarker();
+        window.location.href = './login.html';
       }
      
     };
@@ -758,34 +761,7 @@ function init() {
     xmlhttp.send();
   }
 
-  function get_token() {
-    var xmlhttp = new XMLHttpRequest();
 
-    xmlhttp.open(
-      "POST",
-      SERVER_URL + ":" + SERVER_PORT + AUTHEN_ENDPOINT,
-      true
-    );
-    xmlhttp.setRequestHeader(
-      "Content-type",
-      "application/x-www-form-urlencoded"
-    );
-    xmlhttp.setRequestHeader(
-      "Authorization",
-      "Basic " + btoa(AUTHEN_CLIENT_ID + ":" + AUTHEN_CLIENT_SECRET)
-    );
-    xmlhttp.responseType = "json";
-    xmlhttp.send(
-      "grant_type=password&username=" + AUTHEN_USER + "&password=" + AUTHEN_PASS
-    );
-    xmlhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        var myObj = this.response;
-        token = myObj.access_token;
-        console.log(token);
-      }
-    };
-  }
 
   function f_middle(max, min) {
     return (max - min) / 2 + min;
