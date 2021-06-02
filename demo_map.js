@@ -525,7 +525,7 @@ function init() {
               latitude[index] = myObjWS.latitude;
               longitude[index] = myObjWS.longitude;
               speed[index] = Math.floor(myObjWS.speed);
-              date_time[index] = myObjWS.date_time;
+              date_time[index] = myObjWS.updated_at;
               acceleration[index] = Math.floor(myObjWS.acceleration);
 
               if (myObjWS.box != null) {
