@@ -342,7 +342,7 @@ function init() {
 
             // set distance <0.5 km
             if (
-              calcCrow(post_lat, post_long, latitude, longitude) <= 5 &&
+              calcCrow(post_lat, post_long, latitude, longitude) <= 50 &&
               post_lat != 0 &&
               post_long != 0
             ) {
