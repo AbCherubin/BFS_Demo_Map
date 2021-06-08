@@ -340,9 +340,9 @@ function init() {
           if (latitude != 0 && longitude != 0) {
             location = [parseFloat(longitude), parseFloat(latitude)];
 
-
+            // set distance <0.5 km
             if (
-              calcCrow(post_lat, post_long, latitude, longitude) <= 0.5 &&
+              calcCrow(post_lat, post_long, latitude, longitude) <= 5 &&
               post_lat != 0 &&
               post_long != 0
             ) {
