@@ -325,9 +325,7 @@ function init() {
   function get_playback() {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", url, true);
-    xmlhttp.setRequestHeader("Authorization", "Bearer " + token);
-    xmlhttp.responseType = "json";
-    xmlhttp.send();
+
     xmlhttp.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
         ready_status = false;
@@ -366,7 +364,7 @@ function init() {
             driverfram.push(myObj.results[i].access_control_code);
             sppedfram.push(Math.floor(myObj.results[i].speed));
             accfram.push(Math.floor(myObj.results[i].acceleration));
-            timefram.push(myObj.results[i].date_time);
+            timefram.push(myObj.results[i].updated_at);
             volt.push(myObj.results[i].fuel);
             countt = countt +1;
           }
@@ -406,6 +404,11 @@ function init() {
         get_token();
       }
     };
+
+    xmlhttp.setRequestHeader("Authorization", "Bearer " + token);
+    xmlhttp.responseType = "json";
+    xmlhttp.send();
+    
   }
 
   function get_token() {
@@ -416,7 +419,7 @@ function init() {
         token = myObj.access_token;
       }
     };
-    xmlhttp.open("POST", "http://110.77.148.104:8000/o/token/", true);
+    xmlhttp.open("POST", "http://110.77.148.104:8888/o/token/", true);
     xmlhttp.setRequestHeader(
       "Content-type",
       "application/x-www-form-urlencoded"
@@ -434,7 +437,7 @@ function init() {
 
   function get_initial_url(id, start_datetime, end_datetime) {
     url =
-      "http://110.77.148.104:8000/api/asset_tracking_log/?asset__id__icontains=" +
+      "http://110.77.148.104:8888/api/asset_tracking_log/?asset__id__icontains=" +
       id +
       "&date_time__lte=" +
       end_datetime +
