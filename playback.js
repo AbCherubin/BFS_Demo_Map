@@ -439,9 +439,9 @@ function init() {
     url =
       "http://110.77.148.104:8888/api/asset_tracking_log/?asset__id__icontains=" +
       id +
-      "&date_time__lte=" +
+      "&updated_at__lte=" +
       end_datetime +
-      "&date_time__gte=" +
+      "&updated_at__gte=" +
       start_datetime +
       "&ordering=created_at" +
       "&limit=200";
