@@ -526,7 +526,7 @@ function init() {
               longitude[index] = myObjWS.longitude;
               speed[index] = Math.floor(myObjWS.speed);
               date_time[index] = myObjWS.updated_at;
-              acceleration[index] = Math.floor(myObjWS.acceleration);
+              acceleration[index] = myObjWS.acceleration.toFixed(2);
 
               if (myObjWS.box != null) {
                 box_id[index] = myObjWS.box.name;

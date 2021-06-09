@@ -363,7 +363,7 @@ function init() {
             datafram.push(location);
             driverfram.push(myObj.results[i].access_control_code);
             sppedfram.push(Math.floor(myObj.results[i].speed));
-            accfram.push(Math.floor(myObj.results[i].acceleration));
+            accfram.push(myObj.results[i].acceleration.toFixed(2));
             timefram.push(myObj.results[i].updated_at);
             volt.push(myObj.results[i].fuel);
             countt = countt +1;
