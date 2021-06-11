@@ -1,15 +1,15 @@
 window.onload = init;
 
-const SERVER_URL = "http://110.77.148.104";
-const WS_URL = "ws://110.77.148.104";
+const SERVER_URL = "http://localhost";
+const WS_URL = "ws://localhost";
 const WS_ENDPOINT = "/ws/live/";
-const SERVER_PORT = "8000";
+const SERVER_PORT = "8001";
 const ASSET_TRACKING_ENDPOINT = "/api/asset_tracking/";
 const AUTHEN_ENDPOINT = "/o/token/";
 
-const AUTHEN_CLIENT_ID = "ambZViQ35gyfwTkqdnxbQCjPPsGGo9NMFNXeZm91";
+const AUTHEN_CLIENT_ID = "tSsd4LMBa74pWPWQMzVEkIWvj5OWAevWbSYJiE7v";
 const AUTHEN_CLIENT_SECRET =
-  "oCGC642skgXPbz3wX3GYuBXHNOsRkpXd56yhHI7RsiSkfFMXbgb1fXQFiqQVaYGeSBwfleWPY0SoQtFGPht7KSXdHBqtDdxblvQJAnA6TmuJzidsmxoVhrv9eyh3EUAM";
+  "Waeyc5rGKdUcGUX851ppQwGCczfrHcw2Jf4OPlEOZrXeqHyLZqNssI3ppuVvWZsnYVT36C31ZO4Ue2dV9K8nfUlgzl6bZS8zI9M1qMLjDkjou5K7cHGUI36RCnU1lyB0";
 const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
 
 const AUTHEN_USER = "aerotest";
@@ -549,7 +549,8 @@ function init() {
                 vehicle_img[index] = "./pics/aero.png";
               } else {
                 //function get vehicle name//
-                vehicle_name[index] = myObjWS.asset.vehicle.name;
+               // vehicle_name[index] = myObjWS.asset.vehicle.name;
+               vehicle_name[index] = myObjWS.asset.name;
                 if (vehicle_name[index].includes("TRD")) {
                   vehicle_img[index] = "./pics/TRD.png";
                 } else if (vehicle_name[index].includes("TRE")) {
@@ -752,8 +753,12 @@ function init() {
       SERVER_URL + ":" + SERVER_PORT + ASSET_TRACKING_ENDPOINT,
       true
     );
-    // xmlhttp.withCredentials = true;
+    // xmlhttp.withCredentials = "true";
+    
     xmlhttp.setRequestHeader("Authorization", "Bearer " + token);
+    xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+    
+    
     xmlhttp.responseType = "json";
     xmlhttp.send();
   }
