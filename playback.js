@@ -3,7 +3,7 @@ function init() {
   var current_url = new URL(window.location.href);
   var id = current_url.searchParams.get("a");
   var asset = current_url.searchParams.get("n");
- document.getElementById("asset").innerHTML = asset;
+  document.getElementById("asset").innerHTML = asset;
   var marker_label = asset;
   var start_datetime;
   var end_datetime;
@@ -14,9 +14,7 @@ function init() {
   var table = document.getElementById("table");
   var loading_animate = document.getElementById("Loading");
   var myVar;
-  var ready= false;
-  var startTime;
-  var ready_status = false;
+
   var token;
 
   var latitude;
@@ -26,22 +24,22 @@ function init() {
 
   var location;
   var PolylineData = [];
+  var Snail_trail = [];
+  var line_count = 0;
   var polydate = [];
-  var PolylineData_status = false;
 
   var datafram = [];
   var driverfram = [];
-  var sppedfram=[];
-  var accfram=[];
-  var timefram=[];
-  var volt=[];
-  
+  var sppedfram = [];
+  var accfram = [];
+  var timefram = [];
+  var volt = [];
+
   var sum = 0;
   var countt = 0;
-  var total=0;
+  var total = 0;
 
-  var center = [  100.75321197509766,
-    13.696901811402448];
+  var center = [100.75321197509766, 13.696901811402448];
   // MAP //
   var map = new ol.Map({
     view: new ol.View({
@@ -57,8 +55,7 @@ function init() {
 
   var worldImagery = new ol.layer.Tile({
     source: new ol.source.XYZ({
-      url:
-        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       maxZoom: 19,
     }),
   });
@@ -258,17 +255,21 @@ function init() {
   // function //
   //////////////
   function startAnimation() {
-    route_polyline = new ol.geom.LineString(PolylineData);
-   
-    route_polyline.transform("EPSG:4326", "EPSG:3857");
+    iconSource.clear();
+    for (i = 0; i <= line_count; i++) {
+      if (Snail_trail[i].length !== 0) {
+        route_polyline = new ol.geom.LineString(Snail_trail[i]);
 
-    routeFeature = new ol.Feature({
-      type: "route",
-      geometry: route_polyline,
-    });
+        route_polyline.transform("EPSG:4326", "EPSG:3857");
 
-    iconSource.addFeature(routeFeature);
+        routeFeature = new ol.Feature({
+          type: "route",
+          geometry: route_polyline,
+        });
 
+        iconSource.addFeature(routeFeature);
+      }
+    }
     // if (animating) {
     //   stopAnimation(false);
     // } else {
@@ -331,7 +332,7 @@ function init() {
         ready_status = false;
         var myObj = this.response;
         total = myObj.count;
-
+        
         url = myObj.next;
         for (i = 0; i < myObj.results.length; i++) {
           latitude = myObj.results[i].latitude;
@@ -349,9 +350,18 @@ function init() {
               sum = sum + calcCrow(post_lat, post_long, latitude, longitude);
               console.log(calcCrow(post_lat, post_long, latitude, longitude));
               // console.log(sum);
+              if (PolylineData.length === 0) {
+                PolylineData.push([
+                  parseFloat(post_long),
+                  parseFloat(post_lat),
+                ]);
+              }
               PolylineData.push(location);
               polydate.push(myObj.results[i].updated_at);
+         
             } else {
+                Snail_trail[line_count] = PolylineData;
+                line_count++;
               PolylineData = [];
               console.log(calcCrow(post_lat, post_long, latitude, longitude));
               console.log(
@@ -360,35 +370,44 @@ function init() {
             }
             post_lat = latitude;
             post_long = longitude;
-
+           
             datafram.push(location);
             driverfram.push(myObj.results[i].access_control_code);
             sppedfram.push(Math.floor(myObj.results[i].speed));
             accfram.push(myObj.results[i].acceleration.toFixed(2));
             timefram.push(myObj.results[i].updated_at);
             volt.push(myObj.results[i].fuel);
-            countt = countt +1;
+            countt = countt + 1;
           }
         }
-        if (url !== null) {
-          ready_status = true;
-        }
+     
 
         console.log(myObj);
         console.log(url);
         console.log(countt);
-        
-        document.getElementById("percent").innerHTML = Math.floor(countt/total*100) + " %";
+       
+        Snail_trail[line_count] = PolylineData;
+        document.getElementById("percent").innerHTML =
+          Math.floor((countt / total) * 100) + " %";
         startAnimation();
 
-        if (url != null) {
+        if (url !== null) {
+          ready_status = true ;
           get_playback();
           console.log("loop");
         } else {
           //////////////////////////////////////////////////////////////////////////////
-         
+          if(total === 0){
+          document.getElementById("percent").innerHTML = "No Data Found !"
+          document.getElementById("percent").style.color = "red";
+          document.getElementById("percent").style.marginLeft ="35%";
+          } else{
+          document.getElementById("percent").innerHTML = "Done";
+          document.getElementById("percent").style.color = "white"
+          document.getElementById("percent").style.marginLeft ="45%";}
+
           slideCol.max = datafram.length - 1;
-             
+
           startButton.style.display = "block";
           loading_animate.style.display = "none";
           table.style.display = "block";
@@ -406,10 +425,11 @@ function init() {
       }
     };
 
+   
+
     xmlhttp.setRequestHeader("Authorization", "Bearer " + token);
     xmlhttp.responseType = "json";
     xmlhttp.send();
-    
   }
 
   function get_token() {
@@ -452,47 +472,47 @@ function init() {
   function start() {
     iconSource.clear();
     clearTimeout(myVar);
-    slideCol.value=0;
-    document.getElementById("play").innerHTML= "<i class='far fa-play-circle'></i>";
+    slideCol.value = 0;
+    document.getElementById("play").innerHTML =
+      "<i class='far fa-play-circle'></i>";
     var dateControl_s = document.querySelector('input[id="starttime"]');
     var dateControl_e = document.querySelector('input[id="endtime"]');
     document.getElementById("time").innerHTML = "";
     document.getElementById("play").disabled = true;
     document.getElementById("myRange").disabled = true;
+    document.getElementById("percent").style.marginLeft ="45%";
+    document.getElementById("percent").innerHTML = ""
 
     countt = 0;
-    total=0;
+    total = 0;
 
-    datafram=[];
-    driverfram=[];
-    sppedfram=[];
-    accfram=[];
-    timefram=[];
-    volt=[];
+    datafram = [];
+    driverfram = [];
+    sppedfram = [];
+    accfram = [];
+    timefram = [];
+    volt = [];
 
-    
     start_datetime = dateControl_s.value;
     end_datetime = dateControl_e.value;
 
     console.log(start_datetime);
     console.log(end_datetime);
-    if(start_datetime&&end_datetime){
-   
-    startButton.style.display = "none";
-    loading_animate.style.display = "block";
-    table.style.display = "none";
+    if (start_datetime && end_datetime) {
+      startButton.style.display = "none";
+      loading_animate.style.display = "block";
+      table.style.display = "none";
 
+      start_datetime = set_UTC_7(start_datetime);
+      end_datetime = set_UTC_7(end_datetime);
 
-    
-
-    start_datetime = set_UTC_7(start_datetime);
-    end_datetime = set_UTC_7(end_datetime);
-
-    PolylineData = [];
-    get_initial_url(id, start_datetime, end_datetime);
-    console.log(url);
-    console.log(token);
-    get_playback();
+      PolylineData = [];
+      line_count = 0;
+      
+      get_initial_url(id, start_datetime, end_datetime);
+      console.log(url);
+      console.log(token);
+      get_playback();
     }
   }
 
@@ -561,86 +581,83 @@ function init() {
   }
   //
   function showmark(value) {
-    if(timefram[value]){
-    sds_datetime = timefram[value].split("T");
-    sds_date = sds_datetime[0].split("-");
-    sds_date_y = parseInt(sds_date[0]);
-    sds_date_m = parseInt(sds_date[1]) - 1;
-    sds_date_d = parseInt(sds_date[2]);
+    if (timefram[value]) {
+      sds_datetime = timefram[value].split("T");
+      sds_date = sds_datetime[0].split("-");
+      sds_date_y = parseInt(sds_date[0]);
+      sds_date_m = parseInt(sds_date[1]) - 1;
+      sds_date_d = parseInt(sds_date[2]);
 
-    sds_time = sds_datetime[1].split(":");
-    sds_time_h = parseInt(sds_time[0]) + 7;
-    sds_time_m = parseInt(sds_time[1]);
-    sds_time_s = parseInt(sds_time[2].split("z"));
+      sds_time = sds_datetime[1].split(":");
+      sds_time_h = parseInt(sds_time[0]) + 7;
+      sds_time_m = parseInt(sds_time[1]);
+      sds_time_s = parseInt(sds_time[2].split("z"));
 
-    dateOne = new Date(
-      sds_date_y,
-      sds_date_m,
-      sds_date_d,
-      sds_time_h,
-      sds_time_m,
-      sds_time_s
-    );
-    
-    if ( volt[value]) {
+      dateOne = new Date(
+        sds_date_y,
+        sds_date_m,
+        sds_date_d,
+        sds_time_h,
+        sds_time_m,
+        sds_time_s
+      );
 
-     
-      //map.getView().getZoom() > 13 ? marker_label= vehicle_name[i]:"";
-   
-      //function Fuel Level//
-      // f_100 = myObjWS.asset.vehicle.batt_max;
-      // f_50 = myObjWS.asset.vehicle.batt_half;
-      // f_0 = myObjWS.asset.vehicle.batt_min;
-      // f_75 = f_middle(f_100, f_50);
-      // f_25 = f_middle(f_50, f_0);
+      if (volt[value]) {
+        //map.getView().getZoom() > 13 ? marker_label= vehicle_name[i]:"";
+        //function Fuel Level//
+        // f_100 = myObjWS.asset.vehicle.batt_max;
+        // f_50 = myObjWS.asset.vehicle.batt_half;
+        // f_0 = myObjWS.asset.vehicle.batt_min;
+        // f_75 = f_middle(f_100, f_50);
+        // f_25 = f_middle(f_50, f_0);
+        // if (volt >= f_75) {
+        //   fuel[index] = Math.floor(mapval(volt, f_75, f_100, 75, 100));
+        // } else if (volt >= f_50) {
+        //   fuel[index] = Math.floor(mapval(volt, f_50, f_75, 50, 75));
+        // } else if (volt >= f_25) {
+        //   fuel[index] = Math.floor(mapval(volt, f_25, f_50, 25, 50));
+        // } else if (volt >= f_0) {
+        //   fuel[index] = Math.floor(mapval(volt, f_0, f_25, 0, 25));
+        // }
+      }
 
-      // if (volt >= f_75) {
-      //   fuel[index] = Math.floor(mapval(volt, f_75, f_100, 75, 100));
-      // } else if (volt >= f_50) {
-      //   fuel[index] = Math.floor(mapval(volt, f_50, f_75, 50, 75));
-      // } else if (volt >= f_25) {
-      //   fuel[index] = Math.floor(mapval(volt, f_25, f_50, 25, 50));
-      // } else if (volt >= f_0) {
-      //   fuel[index] = Math.floor(mapval(volt, f_0, f_25, 0, 25));
-      // }
+      //document.getElementById("Volt").innerHTML =  mapval(volt[value], 0, 4095, 0, 3.3);
+      document.getElementById("speed").innerHTML = sppedfram[value];
+      document.getElementById("acceleration").innerHTML = accfram[value];
+      document.getElementById("driver").innerHTML = driverfram[value];
+      document.getElementById("time").innerHTML = dateOne.toLocaleString();
+
+      Marker_Feature = new ol.Feature({
+        type: "Marker_online",
+        geometry: new ol.geom.Point(ol.proj.fromLonLat(datafram[value])),
+      });
+
+      feature = iconSource.getFeatureById(0);
+      if (feature) {
+        iconSource.removeFeature(feature);
+      }
+      Marker_Feature.setProperties({
+        lable: marker_label,
+      });
+      Marker_Feature.setId(0);
+      iconSource.addFeature(Marker_Feature);
     }
-
-    //document.getElementById("Volt").innerHTML =  mapval(volt[value], 0, 4095, 0, 3.3);
-    document.getElementById("speed").innerHTML =  sppedfram[value];
-    document.getElementById("acceleration").innerHTML = accfram[value];
-    document.getElementById("driver").innerHTML =  driverfram[value];
-    document.getElementById("time").innerHTML =  dateOne.toLocaleString();
-
-    Marker_Feature = new ol.Feature({
-      type: "Marker_online",
-      geometry: new ol.geom.Point(ol.proj.fromLonLat(datafram[value])),
-    });
-
-    feature = iconSource.getFeatureById(0);
-    if (feature) {
-      iconSource.removeFeature(feature);
-    }
-    Marker_Feature.setProperties({
-      lable: marker_label,
-    });
-    Marker_Feature.setId(0);
-    iconSource.addFeature(Marker_Feature);}
   }
   function mapval(x, in_min, in_max, out_min, out_max) {
     return ((x - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
   }
-  
+
   function play() {
     var max = slideCol.max;
     var value = slideCol.value;
-  
+
     var p = document.getElementById("play");
-   
-    if (p.innerHTML.includes("play-circle") ){
+
+    if (p.innerHTML.includes("play-circle")) {
       p.innerHTML = "<i class='far fa-stop-circle'></i>";
       function myLoop() {
         //  create a loop function
-        myVar=setTimeout(function () {
+        myVar = setTimeout(function () {
           //  call a 3s setTimeout when the loop is called
           showmark(value); //  your code here
           value++;
@@ -657,14 +674,14 @@ function init() {
       clearTimeout(myVar);
     }
 
-    slideCol.onchange=function () {
+    slideCol.onchange = function () {
       clearTimeout(myVar);
-     max = slideCol.max;
-    value = slideCol.value;
-      if (p.innerHTML.includes("stop-circle") ){
+      max = slideCol.max;
+      value = slideCol.value;
+      if (p.innerHTML.includes("stop-circle")) {
         function myLoop() {
           //  create a loop function
-          myVar=setTimeout(function () {
+          myVar = setTimeout(function () {
             //  call a 3s setTimeout when the loop is called
             showmark(value); //  your code here
             value++;
@@ -676,10 +693,8 @@ function init() {
           }, 200);
         }
         myLoop();
-      } 
+      }
     };
-  
-   
   }
 
   slideCol.oninput = function () {
