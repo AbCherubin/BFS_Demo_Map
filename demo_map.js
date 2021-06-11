@@ -551,7 +551,9 @@ function init() {
                 vehicle_img[index] = "./pics/aero.png";
               } else {
                 //function get vehicle name//
-                vehicle_name[index] = myObjWS.asset.vehicle.name;
+                //vehicle_name[index] = myObjWS.asset.vehicle.name;
+                vehicle_name[index] = myObjWS.asset.name;
+                
                 if (vehicle_name[index].includes("TRD")) {
                   vehicle_img[index] = "./pics/TRD.png";
                 } else if (vehicle_name[index].includes("TRE")) {
