@@ -350,9 +350,10 @@ function init() {
               console.log(calcCrow(post_lat, post_long, latitude, longitude));
               // console.log(sum);
               PolylineData.push(location);
-              polydate.push(myObj.results[i].date_time);
+              polydate.push(myObj.results[i].updated_at);
             } else {
               PolylineData = [];
+              console.log(calcCrow(post_lat, post_long, latitude, longitude));
               console.log(
                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
               );
