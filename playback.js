@@ -28,6 +28,11 @@ function init() {
   var line_count = 0;
   var polydate = [];
 
+  var route_polyline = [];
+  var route_multiline = [];
+  var line_string = [];
+  var route_i = 0;
+
   var datafram = [];
   var driverfram = [];
   var sppedfram = [];
@@ -167,8 +172,6 @@ function init() {
     },
   });
 
-  var animating = false;
-
   ////////////////////////////////////  ////////////////////////////////////
 
   //Marker//
@@ -226,8 +229,8 @@ function init() {
       }),
       route: new ol.style.Style({
         stroke: new ol.style.Stroke({
-          width: 3,
-          color: [235, 57, 65, 0.6],
+          width: 4,
+          color: [255, 239, 51, 0.8],
         }),
         zIndex: 98,
       }),
@@ -270,51 +273,15 @@ function init() {
         iconSource.addFeature(routeFeature);
       }
     }
-    // if (animating) {
-    //   stopAnimation(false);
-    // } else {
-    //   animating = true;
-    //   startTime = new Date().getTime();
-    //   speed = 500;
-    //   console.log(speed);
-    //   startButton.textContent = "Cancel ";
-    //   // hide geoMarker
-    //   geoMarkerR.setStyle(null);
-    //   // just in case you pan somewhere else
-    //   vectorLayer.on("postrender", moveFeature);
-    //   map.render();
-    //   function moveFeature(event) {
-    //     var vectorContext = ol.render.getVectorContext(event);
-    //     var frameState = event.frameState;
 
-    //     if (animating) {
-    //       var elapsed = frameState.time - startTime;
-    //       var distance = (speed * elapsed) / 1e6;
-    //       if (distance >= 1) {
-    //         stopAnimation(true);
-    //         return;
-    //       }
-    //       var currentPoint = new ol.geom.Point(
-    //         route_polyline.getCoordinateAt(distance)
-    //       );
-    //       var style = new ol.style.Style({
-    //         image: new ol.style.Icon({
-    //           anchor: [0.5, 450],
-    //           anchorXUnits: "fraction",
-    //           anchorYUnits: "pixels",
-    //           src: "./pics/bus_pin.png",
-    //           scale: 0.08,
-    //           opacity: 1,
-    //           // color: "#00FB03",
-    //         }),
-    //       });
-    //       var feature = new ol.Feature(currentPoint);
-    //       vectorContext.drawFeature(feature, style);
-    //     }
-    //     // tell OpenLayers to continue the postrender animation
-    //     map.render();
-    //   }
-    // }
+    route_polyline = new ol.geom.LineString(datafram);
+
+    route_polyline.transform("EPSG:4326", "EPSG:3857");
+
+    routeFeature = new ol.Feature({
+      type: "route",
+      geometry: route_polyline,
+    });
   }
 
   // Token
@@ -332,23 +299,66 @@ function init() {
         ready_status = false;
         var myObj = this.response;
         total = myObj.count;
-        
+
         url = myObj.next;
+
         for (i = 0; i < myObj.results.length; i++) {
           latitude = myObj.results[i].latitude;
           longitude = myObj.results[i].longitude;
 
           if (latitude != 0 && longitude != 0) {
+            // sds_datetime = myObj.results[i].updated_at.split("T");
+            // sds_date = sds_datetime[0].split("-");
+            // sds_date_y = parseInt(sds_date[0]);
+            // sds_date_m = parseInt(sds_date[1]) - 1;
+            // sds_date_d = parseInt(sds_date[2]);
+
+            // sds_time = sds_datetime[1].split(":");
+            // sds_time_h = parseInt(sds_time[0]) + 7;
+            // sds_time_m = parseInt(sds_time[1]);
+            // sds_time_s = parseInt(sds_time[2].split("z"));
+
+            // dateOne = new Date(
+            //   sds_date_y,
+            //   sds_date_m,
+            //   sds_date_d,
+            //   sds_time_h,
+            //   sds_time_m,
+            //   sds_time_s
+            // );
+            // if (countt == 0) {
+            //   datetwo = dateOne;
+
+            // } else if (+datetwo <= +dateOne) {
+            //   console.log(((Math.abs(dateOne - datetwo) / 1000) * 0.000277777778)*60*60);
+            //   datetwo = dateOne;
+            // }
+
             location = [parseFloat(longitude), parseFloat(latitude)];
+
+            if (post_lat != 0 && post_long != 0) {
+              line_string.push(
+                [parseFloat(post_long), parseFloat(post_lat)],
+                location
+              );
+              console.log([parseFloat(post_long), parseFloat(post_lat)]);
+              console.log(location);
+              // console.log(line_string);
+              route_multiline[route_i] = new ol.geom.LineString(line_string);
+
+              route_multiline[route_i].transform("EPSG:4326", "EPSG:3857");
+              route_i++;
+              line_string = [];
+            }
 
             // set distance <0.5 km
             if (
-              calcCrow(post_lat, post_long, latitude, longitude) <= 1 &&
+              calcCrow(post_lat, post_long, latitude, longitude) <= 0.7 &&
               post_lat != 0 &&
               post_long != 0
             ) {
               sum = sum + calcCrow(post_lat, post_long, latitude, longitude);
-              console.log(calcCrow(post_lat, post_long, latitude, longitude));
+              //console.log(calcCrow(post_lat, post_long, latitude, longitude));
               // console.log(sum);
               if (PolylineData.length === 0) {
                 PolylineData.push([
@@ -358,19 +368,16 @@ function init() {
               }
               PolylineData.push(location);
               polydate.push(myObj.results[i].updated_at);
-         
             } else {
-                Snail_trail[line_count] = PolylineData;
-                line_count++;
+              Snail_trail[line_count] = PolylineData;
+              line_count++;
               PolylineData = [];
               console.log(calcCrow(post_lat, post_long, latitude, longitude));
-              console.log(
-                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-              );
             }
+
             post_lat = latitude;
             post_long = longitude;
-           
+
             datafram.push(location);
             driverfram.push(myObj.results[i].access_control_code);
             sppedfram.push(Math.floor(myObj.results[i].speed));
@@ -380,31 +387,33 @@ function init() {
             countt = countt + 1;
           }
         }
-     
 
         console.log(myObj);
         console.log(url);
         console.log(countt);
-       
+        console.log(route_multiline.length);
+        console.log(datafram.length);
+
         Snail_trail[line_count] = PolylineData;
         document.getElementById("percent").innerHTML =
           Math.floor((countt / total) * 100) + " %";
         startAnimation();
 
         if (url !== null) {
-          ready_status = true ;
+          ready_status = true;
           get_playback();
           console.log("loop");
         } else {
           //////////////////////////////////////////////////////////////////////////////
-          if(total === 0){
-          document.getElementById("percent").innerHTML = "No Data Found !"
-          document.getElementById("percent").style.color = "red";
-          document.getElementById("percent").style.marginLeft ="35%";
-          } else{
-          document.getElementById("percent").innerHTML = "Done";
-          document.getElementById("percent").style.color = "white"
-          document.getElementById("percent").style.marginLeft ="45%";}
+          if (total === 0) {
+            document.getElementById("percent").innerHTML = "No Data Found !";
+            document.getElementById("percent").style.color = "red";
+            document.getElementById("percent").style.marginLeft = "35%";
+          } else {
+            document.getElementById("percent").innerHTML = "Done";
+            document.getElementById("percent").style.color = "white";
+            document.getElementById("percent").style.marginLeft = "45%";
+          }
 
           slideCol.max = datafram.length - 1;
 
@@ -424,8 +433,6 @@ function init() {
         get_token();
       }
     };
-
-   
 
     xmlhttp.setRequestHeader("Authorization", "Bearer " + token);
     xmlhttp.responseType = "json";
@@ -455,7 +462,6 @@ function init() {
     xmlhttp.responseType = "json";
     xmlhttp.send("grant_type=password&username=aerotest&password=test1234");
   }
-
   function get_initial_url(id, start_datetime, end_datetime) {
     url =
       "http://110.77.148.104:8888/api/asset_tracking_log/?asset__id__icontains=" +
@@ -471,17 +477,18 @@ function init() {
 
   function start() {
     iconSource.clear();
+    init();
     clearTimeout(myVar);
     slideCol.value = 0;
     document.getElementById("play").innerHTML =
-      "<i class='far fa-play-circle'></i>";
+      "<i class='fas fa-play'></i>";
     var dateControl_s = document.querySelector('input[id="starttime"]');
     var dateControl_e = document.querySelector('input[id="endtime"]');
     document.getElementById("time").innerHTML = "";
     document.getElementById("play").disabled = true;
     document.getElementById("myRange").disabled = true;
-    document.getElementById("percent").style.marginLeft ="45%";
-    document.getElementById("percent").innerHTML = ""
+    document.getElementById("percent").style.marginLeft = "45%";
+    document.getElementById("percent").innerHTML = "";
 
     countt = 0;
     total = 0;
@@ -492,6 +499,13 @@ function init() {
     accfram = [];
     timefram = [];
     volt = [];
+
+    route_multiline = [];
+    route_polyline = [];
+    route_i = 0;
+
+    post_lat = 0;
+    post_long = 0;
 
     start_datetime = dateControl_s.value;
     end_datetime = dateControl_e.value;
@@ -508,7 +522,7 @@ function init() {
 
       PolylineData = [];
       line_count = 0;
-      
+
       get_initial_url(id, start_datetime, end_datetime);
       console.log(url);
       console.log(token);
@@ -516,17 +530,6 @@ function init() {
     }
   }
 
-  function stopAnimation(ended) {
-    animating = false;
-    startButton.textContent = "PlayBack";
-
-    // if animation cancelled set the marker at the beginning
-    var coord = route_polyline.getCoordinateAt(ended ? 1 : 0);
-    console.log(ended);
-    geoMarker.getGeometry().setCoordinates(coord);
-    // remove listener
-    // vectorLayer.un("postrender", moveFeature);
-  }
   function set_UTC_7(date_time) {
     var sds_datetime = date_time.split("T");
     var sds_date = sds_datetime[0].split("-");
@@ -643,64 +646,156 @@ function init() {
       iconSource.addFeature(Marker_Feature);
     }
   }
+
   function mapval(x, in_min, in_max, out_min, out_max) {
     return ((x - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
   }
 
-  function play() {
-    var max = slideCol.max;
-    var value = slideCol.value;
+  var animating;
+  var p;
+  var distance;
+  var elapsed;
+  var startTime;
+  var init_distance;
+  var value;
+  var i_showmark;
 
-    var p = document.getElementById("play");
+  function init() {
+    animating = false;
+    p = document.getElementById("play");
+    distance = 0;
+    elapsed = 0;
+    startTime = 0;
+    init_distance = 0;
+    i_showmark = 0;
+    value = 0;
+  }
+  init();
+  function moveFeature(event) {
+    //var vectorContext = ol.render.getVectorContext(event);
+    var frameState = event.frameState;
 
-    if (p.innerHTML.includes("play-circle")) {
-      p.innerHTML = "<i class='far fa-stop-circle'></i>";
-      function myLoop() {
-        //  create a loop function
-        myVar = setTimeout(function () {
-          //  call a 3s setTimeout when the loop is called
-          showmark(value); //  your code here
-          value++;
-          slideCol.value = value; //  increment the counter
-          if (value <= max) {
-            //  if the counter < 10, call the loop function
-            myLoop(); //  ..  again which will trigger another
-          } //  ..  setTimeout()
-        }, 200);
-      }
-      myLoop();
-    } else {
-      p.innerHTML = "<i class='far fa-play-circle'></i>";
-      clearTimeout(myVar);
-    }
+    if (animating) {
+      elapsed = frameState.time - startTime;
+      distance = (speed * elapsed) / 1e6;
 
-    slideCol.onchange = function () {
-      clearTimeout(myVar);
-      max = slideCol.max;
-      value = slideCol.value;
-      if (p.innerHTML.includes("stop-circle")) {
-        function myLoop() {
-          //  create a loop function
-          myVar = setTimeout(function () {
-            //  call a 3s setTimeout when the loop is called
-            showmark(value); //  your code here
-            value++;
-            slideCol.value = value; //  increment the counter
-            if (value <= max) {
-              //  if the counter < 10, call the loop function
-              myLoop(); //  ..  again which will trigger another
-            } //  ..  setTimeout()
-          }, 200);
+      if (distance >= 1 - init_distance) {
+        // distance = 1;
+        // init_distance = 0;
+        distance = 0;
+        init_distance = 0;
+        startTime = new Date().getTime();
+        frameState = event.frameState;
+        console.log(i_showmark);
+
+        if (parseInt(i_showmark)+1 >= parseInt(slideCol.max)) {
+          console.log("DONE");
+          refreshAnimation();
+          return;
         }
-        myLoop();
+        i_showmark++;
+        console.log(i_showmark);
       }
-    };
+
+      //value = (init_distance + distance) * slideCol.max;
+
+      //showmark(Math.round(value/slideCol.max*( datafram.length - 1)));
+
+      showmark(i_showmark);
+      slideCol.value = i_showmark;
+      if (parseInt(i_showmark) <= parseInt(slideCol.max) - 1) {
+        Marker_Feature = new ol.Feature({
+          type: "Marker_online",
+          geometry: new ol.geom.Point(
+            //route_polyline.getCoordinateAt(init_distance + distance)
+            route_multiline[i_showmark].getCoordinateAt(
+              init_distance + distance
+            )
+          ),
+        });
+        value = init_distance + distance;
+
+        feature = iconSource.getFeatureById(0);
+        if (feature) {
+          iconSource.removeFeature(feature);
+        }
+        Marker_Feature.setProperties({
+          lable: marker_label,
+        });
+        Marker_Feature.setId(0);
+        iconSource.addFeature(Marker_Feature);
+      }
+      //vectorContext.drawFeature(feature, style);
+    }
+    // tell OpenLayers to continue the postrender animation
+    map.render();
   }
 
+  function play() {
+    if (animating) {
+      stopAnimation(false);
+    } else {
+      animating = true;
+      startTime = new Date().getTime();
+      speed = 3000;
+
+      p.innerHTML = "<i class='fas fa-pause'></i>";
+      // hide geoMarker
+      markers.on("postrender", moveFeature);
+      map.render();
+    }
+  }
+  function stopAnimation(ended) {
+    animating = false;
+    p.innerHTML = "<i class='fas fa-play'></i>";
+    
+    console.log(slideCol.value);
+    console.log(slideCol.max);
+    // if animation cancelled set the marker at the beginning
+    init_distance = distance + init_distance;
+
+    if (parseInt(i_showmark) <= parseInt(slideCol.max) - 1) {
+      Marker_Feature.getGeometry().setCoordinates(
+        route_multiline[i_showmark].getCoordinateAt(value)
+      );
+    }
+    // remove listener
+    // vectorLayer.un("postrender", moveFeature);
+  }
+  function refreshAnimation() {
+    animating = false;
+    p.innerHTML = "<i class='fas fa-undo'></i>";
+
+    //init_distance = distance + init_distance;
+    showmark(slideCol.max);
+
+    Marker_Feature.getGeometry().setCoordinates(
+      route_multiline[slideCol.max - 1].getCoordinateAt(value)
+    );
+    slideCol.value = slideCol.max;
+
+    init();
+  }
+
+  slideCol.onchange = function () {
+    stopAnimation(false);
+    showmark(slideCol.value);
+    distance = 0;
+    init_distance = 0;
+    i_showmark = slideCol.value;
+    console.log(i_showmark);
+    if (parseInt(i_showmark) < parseInt(slideCol.max) - 1) {
+      Marker_Feature.getGeometry().setCoordinates(
+        route_multiline[i_showmark].getCoordinateAt(0)
+      );
+    }
+  };
   slideCol.oninput = function () {
-    clearTimeout(myVar);
+    stopAnimation(false);
+
     showmark(this.value);
   };
+
   startButton.addEventListener("click", start, false);
   playButton.addEventListener("click", play, false);
   ////////////////////////////////////
