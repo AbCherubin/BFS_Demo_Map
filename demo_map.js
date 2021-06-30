@@ -22,9 +22,9 @@ var current_url = new URL(window.location.href);
 const token = current_url.searchParams.get("t");
 
 function init() {
-  
+
   // console.log(token);
-  var dis_vehicle = [7509671, 7530863,7509669];
+  var dis_vehicle = [7509671, 7530863, 7509669];
 
   var id_selected;
   var obj_data = {};
@@ -80,8 +80,8 @@ function init() {
   // MAP //
   var map = new ol.Map({
     //C
-    interactions: ol.interaction.defaults({ doubleClickZoom: false }),
-
+    interactions: ol.interaction.defaults({ doubleClickZoom: false, altShiftDragRotate: false, pinchRotate: false }),
+    controls:ol.control.defaults({rotate:false}),
     view: new ol.View({
       center: ol.proj.fromLonLat(center),
       zoom: 15.5,
@@ -506,12 +506,12 @@ function init() {
             console.log(obj_data);
             let socket = new WebSocket(
               WS_URL +
-                ":" +
-                SERVER_PORT +
-                WS_ENDPOINT +
-                id[i] +
-                "/?token=" +
-                token
+              ":" +
+              SERVER_PORT +
+              WS_ENDPOINT +
+              id[i] +
+              "/?token=" +
+              token
             );
             socket.onopen = function (e) {
               console.log(" open now");
@@ -531,7 +531,7 @@ function init() {
               if (myObjWS.box != null) {
                 box_id[index] = myObjWS.box.name;
               }
-              
+
               circle_location = [
                 parseFloat(longitude[index]),
                 parseFloat(latitude[index]),
@@ -553,7 +553,7 @@ function init() {
                 //function get vehicle name//
                 //vehicle_name[index] = myObjWS.asset.vehicle.name;
                 vehicle_name[index] = myObjWS.asset.name;
-                
+
                 if (vehicle_name[index].includes("TRD")) {
                   vehicle_img[index] = "./pics/TRD.png";
                 } else if (vehicle_name[index].includes("TRE")) {
@@ -749,7 +749,7 @@ function init() {
         //showMarker();
         window.location.href = './login.html';
       }
-     
+
     };
 
     xmlhttp.open(
