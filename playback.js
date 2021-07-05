@@ -626,7 +626,7 @@ function init() {
 
       //document.getElementById("Volt").innerHTML =  mapval(volt[value], 0, 4095, 0, 3.3);
       document.getElementById("speed").innerHTML = sppedfram[value];
-      document.getElementById("acceleration").innerHTML = accfram[value];
+     // document.getElementById("acceleration").innerHTML = accfram[value];
       document.getElementById("driver").innerHTML = driverfram[value];
       document.getElementById("time").innerHTML = dateOne.toLocaleString();
 

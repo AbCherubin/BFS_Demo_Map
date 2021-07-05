@@ -424,7 +424,7 @@ function init() {
 
     document.getElementById("id").innerHTML = id[i];
     document.getElementById("speed").innerHTML = speed[i];
-    document.getElementById("acceleration").innerHTML = acceleration[i];
+   // document.getElementById("acceleration").innerHTML = acceleration[i];
     document.getElementById("box_id").innerHTML = box_id[i];
     if (box_id[i]) {
       if (box_id[i].includes("4G")) {
