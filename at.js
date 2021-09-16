@@ -19,13 +19,13 @@ const AUTHEN_PASS = "test1234";
 var current_url = new URL(window.location.href);
 
 
-const token = current_url.searchParams.get("t");
+//const token = current_url.searchParams.get("t");
 
-
+const token = "Yn07Pie76xVvPJ2G5IWjZdXoBvU4j6";
 function init() {
 
   // console.log(token);
-  var dis_vehicle = [1010905];
+  var dis_vehicle = [7530004];
 
   var id_selected;
   var obj_data = {};
@@ -746,9 +746,8 @@ function init() {
           return;
         }
       } else if (this.readyState == 4 && this.status == 401) {
-        // get_token();
-        //showMarker();
-        window.location.href = './login.html';
+        authen("tguser","tg1234567");
+       
       }
 
     };
@@ -782,6 +781,36 @@ function init() {
     }
     return true;
   }
+  
+function authen(USER, PASS) {
+  var xmlhttp = new XMLHttpRequest();
+
+  xmlhttp.open("POST", SERVER_URL + ":" + SERVER_PORT + AUTHEN_ENDPOINT, true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlhttp.responseType = "json";
+  xmlhttp.send(
+    "grant_type=password&username=" +
+      USER +
+      "&password=" +
+      PASS +
+      "&client_id=" +
+      client_id +
+      "&client_secret=" +
+      client_secret
+  );
+  xmlhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      var myObj = this.response;
+      //token = myObj.access_token;
+      loginErrorMsg.style.opacity = 0;
+      console.log(myObj.access_token);
+      token =myObj.access_token;
+
+    } else {
+      loginErrorMsg.style.opacity = 1;
+    }
+  };
+}
 
   showMarker();
   //c
