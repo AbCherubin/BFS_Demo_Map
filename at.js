@@ -16,12 +16,16 @@ const AUTHEN_USER = "aerotest";
 const AUTHEN_PASS = "test1234";
 
 
+const client_id = "fbGXEuXRI5qNOeJjvk6fzS1bVadpjrQFOUF6PlKF";
+const client_secret =
+  "w2texbkmjioQVNxyRCj3868lvVr3hrjSqFYjJAkQcvnZMdvmXf2RvCVhdrAIaF9QVt1Ff2badx0g3AmXADl269ZAJG5KS0BhoWbcgSBVuLDiGbz6RXEWOD9A0XyXrzQk";
+
 var current_url = new URL(window.location.href);
 
 
 //const token = current_url.searchParams.get("t");
 
-const token = "Yn07Pie76xVvPJ2G5IWjZdXoBvU4j6";
+var token = "ZtbBO5vEQ5ebonYrAlemdiX2pBVQjX";
 function init() {
 
   // console.log(token);
@@ -802,12 +806,12 @@ function authen(USER, PASS) {
     if (this.readyState == 4 && this.status == 200) {
       var myObj = this.response;
       //token = myObj.access_token;
-      loginErrorMsg.style.opacity = 0;
+
       console.log(myObj.access_token);
       token =myObj.access_token;
-
+      showMarker();
     } else {
-      loginErrorMsg.style.opacity = 1;
+   console.log(this.response);
     }
   };
 }
