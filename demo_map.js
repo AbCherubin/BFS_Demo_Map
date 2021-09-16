@@ -24,7 +24,7 @@ const token = current_url.searchParams.get("t");
 function init() {
 
   // console.log(token);
-  var dis_vehicle = [7509671, 7530863, 7509669];
+  var dis_vehicle = [7509671, 7530863, 7509669,1010905,7530004];
 
   var id_selected;
   var obj_data = {};
