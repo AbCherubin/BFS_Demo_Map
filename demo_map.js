@@ -8,9 +8,9 @@ const SERVER_PORT = "13111";
 const ASSET_TRACKING_ENDPOINT = "/api/asset_tracking/";
 const AUTHEN_ENDPOINT = "/o/token/";
 
-const AUTHEN_CLIENT_ID = "ambZViQ35gyfwTkqdnxbQCjPPsGGo9NMFNXeZm91";
+const AUTHEN_CLIENT_ID = "pN8RUcbi34WpQReDAJIGCbvzH4Jy70FkzcoR9ZpP";
 const AUTHEN_CLIENT_SECRET =
-  "oCGC642skgXPbz3wX3GYuBXHNOsRkpXd56yhHI7RsiSkfFMXbgb1fXQFiqQVaYGeSBwfleWPY0SoQtFGPht7KSXdHBqtDdxblvQJAnA6TmuJzidsmxoVhrv9eyh3EUAM";
+  "P67x8iUah9TK8aG9fWUwGeWcHDcD3QyNCnlh2hXSrLLWRJPQZbypxNLov6t0pBZgoaj4nAlUPY38W5tL8iX7qkylHYnkpNneej5SnFb9joHiHUZCa3pIYP7DvabjpYoK";
 const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
 
 const AUTHEN_USER = "aerotest";
@@ -493,6 +493,7 @@ function init() {
         iconSource.clear();
         for (i = 0; i < myObj.count; i++) {
           // let socket = new WebSocket(WS_URL+":"+SERVER_PORT+WS_ENDPOINT+id+"/?token="+token);
+         if(!myObj.results[i])return;
           latitude[i] = myObj.results[i].latitude;
           longitude[i] = myObj.results[i].longitude;
 
@@ -550,10 +551,13 @@ function init() {
               if (isEmpty(myObjWS.asset.vehicle)) {
                 // Check if Empty
                 vehicle_img[index] = "./pics/aero.png";
+           
+                vehicle_name[index] = myObjWS.asset.name;
               } else {
                 //function get vehicle name//
                 //vehicle_name[index] = myObjWS.asset.vehicle.name;
                 vehicle_name[index] = myObjWS.asset.name;
+                console.log(vehicle_name[index])
 
                 if (vehicle_name[index].includes("TRD")) {
                   vehicle_img[index] = "./pics/TRD.png";

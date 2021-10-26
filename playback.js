@@ -288,7 +288,7 @@ function init() {
 
   //fetch Data
   // get_token();
-  token = "8JBfnko6nSKsaDpEUXZXbEg0nWJhbM";
+  token = "zjzAY9OnbCSmXHtJfgzq8tNQrq4Mhp";
 
   function get_playback() {
     var xmlhttp = new XMLHttpRequest();
@@ -447,7 +447,7 @@ function init() {
         token = myObj.access_token;
       }
     };
-    xmlhttp.open("POST", "http://110.77.148.104:8888/o/token/", true);
+    xmlhttp.open("POST", "http://110.77.148.104:13111/o/token/", true);
     xmlhttp.setRequestHeader(
       "Content-type",
       "application/x-www-form-urlencoded"
@@ -456,7 +456,7 @@ function init() {
       "Authorization",
       "Basic " +
         btoa(
-          "ambZViQ35gyfwTkqdnxbQCjPPsGGo9NMFNXeZm91:oCGC642skgXPbz3wX3GYuBXHNOsRkpXd56yhHI7RsiSkfFMXbgb1fXQFiqQVaYGeSBwfleWPY0SoQtFGPht7KSXdHBqtDdxblvQJAnA6TmuJzidsmxoVhrv9eyh3EUAM"
+          "pN8RUcbi34WpQReDAJIGCbvzH4Jy70FkzcoR9ZpP:P67x8iUah9TK8aG9fWUwGeWcHDcD3QyNCnlh2hXSrLLWRJPQZbypxNLov6t0pBZgoaj4nAlUPY38W5tL8iX7qkylHYnkpNneej5SnFb9joHiHUZCa3pIYP7DvabjpYoK"
         )
     );
     xmlhttp.responseType = "json";
@@ -464,7 +464,7 @@ function init() {
   }
   function get_initial_url(id, start_datetime, end_datetime) {
     url =
-      "http://110.77.148.104:8888/api/asset_tracking_log/?asset__id__icontains=" +
+      "http://110.77.148.104:13111/api/asset_tracking_log/?asset__id__icontains=" +
       id +
       "&updated_at__lte=" +
       end_datetime +

@@ -5,13 +5,13 @@ const loginErrorMsg = document.getElementById("login-error-msg");
 const SERVER_URL = "http://110.77.148.104";
 const WS_URL = "ws://110.77.148.104";
 const WS_ENDPOINT = "/ws/live/";
-const SERVER_PORT = "8888";
+const SERVER_PORT = "13111";
 const ASSET_TRACKING_ENDPOINT = "/api/asset_tracking/";
 const AUTHEN_ENDPOINT = "/o/token/";
 
-const client_id = "fbGXEuXRI5qNOeJjvk6fzS1bVadpjrQFOUF6PlKF";
+const client_id = "pN8RUcbi34WpQReDAJIGCbvzH4Jy70FkzcoR9ZpP";
 const client_secret =
-  "w2texbkmjioQVNxyRCj3868lvVr3hrjSqFYjJAkQcvnZMdvmXf2RvCVhdrAIaF9QVt1Ff2badx0g3AmXADl269ZAJG5KS0BhoWbcgSBVuLDiGbz6RXEWOD9A0XyXrzQk";
+  "P67x8iUah9TK8aG9fWUwGeWcHDcD3QyNCnlh2hXSrLLWRJPQZbypxNLov6t0pBZgoaj4nAlUPY38W5tL8iX7qkylHYnkpNneej5SnFb9joHiHUZCa3pIYP7DvabjpYoK";
 
 const TEMP_AUTHEN_TOKEN = "WiXyr9Tv2ah6uyGhwhtxMjXyuZJz7W";
 
