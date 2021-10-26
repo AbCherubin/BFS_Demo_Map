@@ -3,7 +3,8 @@ window.onload = init;
 const SERVER_URL = "http://110.77.148.104";
 const WS_URL = "ws://110.77.148.104";
 const WS_ENDPOINT = "/ws/live/";
-const SERVER_PORT = "8888";
+//8888
+const SERVER_PORT = "13111";
 const ASSET_TRACKING_ENDPOINT = "/api/asset_tracking/";
 const AUTHEN_ENDPOINT = "/o/token/";
 
